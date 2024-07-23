@@ -1,7 +1,7 @@
 package com.example.fabricshoppingcart.controller;
 
 import com.example.fabricshoppingcart.Controller.CartController;
-import com.example.fabricshoppingcart.exception.InvalidInput;
+import com.example.fabricshoppingcart.exception.InvalidInputException;
 import com.example.fabricshoppingcart.model.Cart;
 import com.example.fabricshoppingcart.model.Item;
 import com.example.fabricshoppingcart.response.ApiResponse;
@@ -33,7 +33,7 @@ public class CartControllerTest {
     }
 
     @Test
-    void testAddItemToCart() throws InvalidInput {
+    void testAddItemToCart() throws InvalidInputException {
         Item item = Item.builder()
                 .name("book")
                 .quantity(2)
@@ -46,7 +46,7 @@ public class CartControllerTest {
     }
 
     @Test
-    void testUpdateItemInCart() throws InvalidInput {
+    void testUpdateItemInCart() throws InvalidInputException {
         Item item = Item.builder()
                 .id(1L)
                 .name("book")
@@ -59,14 +59,14 @@ public class CartControllerTest {
     }
 
     @Test
-    void testRemoveItemFromCart() throws InvalidInput {
+    void testRemoveItemFromCart() throws InvalidInputException {
         ApiResponse apiResponse = cartController.removeItemFromCart(1L, 1L).getBody();
         assert (Objects.equals(apiResponse.getStatus(), "success"));
         assert (apiResponse.getData() != null);
     }
 
     @Test
-    void testGetCartTotal() throws InvalidInput {
+    void testGetCartTotal() throws InvalidInputException {
         Mockito.when(cartServiceImpl.getCartTotal(1L)).thenReturn(100.0);
         ApiResponse apiResponse = cartController.getCartTotal(1L).getBody();
         assert (Objects.equals(apiResponse.getStatus(), "success"));
@@ -74,7 +74,7 @@ public class CartControllerTest {
     }
 
     @Test
-    void testGetCartById() throws InvalidInput {
+    void testGetCartById() throws InvalidInputException {
         Cart cart = Cart.builder()
                 .userId(1L)
                 .id(1L)

@@ -1,6 +1,6 @@
 package com.example.fabricshoppingcart.Controller;
 
-import com.example.fabricshoppingcart.exception.InvalidInput;
+import com.example.fabricshoppingcart.exception.InvalidInputException;
 import com.example.fabricshoppingcart.model.Cart;
 import com.example.fabricshoppingcart.model.Item;
 import com.example.fabricshoppingcart.response.ApiResponse;
@@ -38,9 +38,9 @@ public class CartController {
         try {
             Item responseItem = cartServiceImpl.addItemToCart(cartId, item);
             return Util.createResponse(responseItem, "success", 200);
-        } catch (InvalidInput e) {
+        } catch (InvalidInputException e) {
             return Util.createResponse(e.getMessage(), "failure", 400);
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return Util.createResponse(e.getMessage(), "failure", 500);
         }
     }
@@ -51,7 +51,7 @@ public class CartController {
         try {
             Item updatedItem = cartServiceImpl.updateItemInCart(cartId, item);
             return Util.createResponse(updatedItem, "success", 200);
-        } catch (InvalidInput e) {
+        } catch (InvalidInputException e) {
             return Util.createResponse(e.getMessage(), "failure", 400);
         } catch (Exception e) {
             return Util.createResponse(e.getMessage(), "failure", 500);
@@ -64,7 +64,7 @@ public class CartController {
         try {
             cartServiceImpl.removeItemFromCart(cartId, itemId);
             return Util.createResponse("Item removed", "success", 200);
-        } catch (InvalidInput e) {
+        } catch (InvalidInputException e) {
             return Util.createResponse(e.getMessage(), "failure", 400);
         } catch (Exception e) {
             return Util.createResponse(e.getMessage(), "failure", 500);
@@ -77,7 +77,7 @@ public class CartController {
         try {
             double totalPrice = cartServiceImpl.getCartTotal(cartId);
             return Util.createResponse(totalPrice, "success", 200);
-        } catch (InvalidInput e) {
+        } catch (InvalidInputException e) {
             return Util.createResponse(e.getMessage(), "failure", 400);
         } catch (Exception e) {
             return Util.createResponse(e.getMessage(), "failure", 500);
@@ -85,12 +85,12 @@ public class CartController {
     }
 
     @GetMapping("/{cartId}")
-    public ResponseEntity<ApiResponse> getCartById(@NonNull @PathVariable Long cartId) throws InvalidInput {
+    public ResponseEntity<ApiResponse> getCartById(@NonNull @PathVariable Long cartId) throws InvalidInputException {
         log.info("CartController : request for get cart details for cartId : " + cartId);
         try {
             Cart responseCart = cartServiceImpl.getCartById(cartId);
             return Util.createResponse(responseCart, "success", 200);
-        } catch (InvalidInput e) {
+        } catch (InvalidInputException e) {
             return Util.createResponse(e.getMessage(), "failure", 400);
         } catch (Exception e) {
             return Util.createResponse(e.getMessage(), "failure", 500);

@@ -65,6 +65,7 @@ public class CartControllerTest {
         Cart createdCart = (Cart) repsonse.getData();
         Long cartId = createdCart.getId();
         Item item = Item.builder()
+                .itemId(1L)
                 .name("book")
                 .quantity(2)
                 .unitPrice(20)
@@ -78,7 +79,7 @@ public class CartControllerTest {
         assert (addedItem.getQuantity() == 2);
 
         item = Item.builder()
-                .id(addedItem.getId())
+                .itemId(addedItem.getItemId())
                 .name("book")
                 .quantity(4)
                 .unitPrice(20)

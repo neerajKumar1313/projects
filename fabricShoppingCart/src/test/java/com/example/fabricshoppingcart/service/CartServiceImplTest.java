@@ -2,7 +2,7 @@ package com.example.fabricshoppingcart.service;
 
 import com.example.fabricshoppingcart.dao.CartDaoImpl;
 import com.example.fabricshoppingcart.dao.ItemDaoImpl;
-import com.example.fabricshoppingcart.exception.InvalidInput;
+import com.example.fabricshoppingcart.exception.InvalidInputException;
 import com.example.fabricshoppingcart.model.Cart;
 import com.example.fabricshoppingcart.model.Item;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ public class CartServiceImplTest {
     }
 
     @Test
-    void testAddItemToCart() throws InvalidInput {
+    void testAddItemToCart() throws InvalidInputException {
         Optional<Cart> cartOptional = Optional.of(Cart.builder()
                 .id(1L)
                 .userId(1L)
@@ -57,25 +57,26 @@ public class CartServiceImplTest {
 
     @Test
     void testAddItemToCartException() {
+        Optional<Cart> emptyOptional = Optional.empty();
         Item item = Item.builder()
                 .id(1L)
                 .unitPrice(20)
                 .name("book")
                 .build();
-        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(null);
+        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(emptyOptional);
         Mockito.when(itemDaoImpl.saveItem(Mockito.any())).thenReturn(item);
 
         try {
             Item savedItem = cartService.addItemToCart(1L, item);
         } catch (Exception e) {
-            assert (Objects.equals(e.getMessage(), "Error in updating Cart"));
+            assert (Objects.equals(e.getMessage(), "Cart not found"));
         }
     }
 
     @Test
-    void testUpdateItemInCart() throws InvalidInput {
+    void testUpdateItemInCart() throws InvalidInputException {
         Item item = Item.builder()
-                .id(1L)
+                .itemId(1L)
                 .unitPrice(20)
                 .name("book")
                 .quantity(2)
@@ -90,7 +91,7 @@ public class CartServiceImplTest {
         Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(cartOptional);
         Mockito.when(itemDaoImpl.saveItem(Mockito.any())).thenReturn(item);
         Item updatedItem = cartService.updateItemInCart(1L, item);
-        assert (updatedItem.getId() == 1L);
+        assert (updatedItem.getItemId() == 1L);
     }
 
     @Test
@@ -108,25 +109,26 @@ public class CartServiceImplTest {
                 .userId(1L)
                 .items(items)
                 .build());
-        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(null);
+        Optional<Cart> emptyOptional = Optional.empty();
+        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(emptyOptional);
         Mockito.when(itemDaoImpl.saveItem(Mockito.any())).thenReturn(item);
         try {
             Item updatedItem = cartService.updateItemInCart(1L, item);
         } catch (Exception e) {
-            assert (Objects.equals(e.getMessage(), "Error in updating Cart"));
+            assert (Objects.equals(e.getMessage(), "Cart/item not found"));
         }
     }
 
     @Test
-    void testRemoveItemFromCart() throws InvalidInput {
+    void testRemoveItemFromCart() throws InvalidInputException {
         Item item1 = Item.builder()
-                .id(1L)
+                .itemId(1L)
                 .unitPrice(20)
                 .name("book")
                 .quantity(2)
                 .build();
         Item item2 = Item.builder()
-                .id(2L)
+                .itemId(2L)
                 .unitPrice(30)
                 .name("map")
                 .quantity(2)
@@ -145,16 +147,17 @@ public class CartServiceImplTest {
 
     @Test
     void testRemoveItemFromCartException() {
-        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(null);
+        Optional<Cart> emptyOptional = Optional.empty();
+        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(emptyOptional);
         try {
             cartService.removeItemFromCart(1L, 1L);
         } catch (Exception e) {
-            assert (Objects.equals(e.getMessage(), "Error in updating Cart"));
+            assert (Objects.equals(e.getMessage(), "Cart not found"));
         }
     }
 
     @Test
-    void testGetCartTotal() throws InvalidInput {
+    void testGetCartTotal() throws InvalidInputException {
         Item item1 = Item.builder()
                 .id(1L)
                 .unitPrice(20)
@@ -182,16 +185,17 @@ public class CartServiceImplTest {
 
     @Test
     void testGetCartTotalException() {
-        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(null);
+        Optional<Cart> emptyOptional = Optional.empty();
+        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(emptyOptional);
         try {
             double totalPrice = cartService.getCartTotal(1L);
         } catch (Exception e) {
-            assert (Objects.equals(e.getMessage(), "Error in getting cart total"));
+            assert (Objects.equals(e.getMessage(), "Cart not found"));
         }
     }
 
     @Test
-    void testCartById() throws InvalidInput {
+    void testCartById() throws InvalidInputException {
         Item item1 = Item.builder()
                 .id(1L)
                 .unitPrice(20)
@@ -219,11 +223,12 @@ public class CartServiceImplTest {
 
     @Test
     void testCartByIdException() {
-        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(null);
+        Optional<Cart> emptyOptional = Optional.empty();
+        Mockito.when(cartDaoImpl.getCartById(1L)).thenReturn(emptyOptional);
         try {
             Cart fetchedCart = cartService.getCartById(1L);
         } catch (Exception e) {
-            assert (Objects.equals(e.getMessage(), "Error in getting Cart Details"));
+            assert (Objects.equals(e.getMessage(), "Cart not found"));
         }
     }
 }
